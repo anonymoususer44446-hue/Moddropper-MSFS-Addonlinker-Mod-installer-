@@ -80,12 +80,10 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DarkTheme.vb" />
     <Compile Include="DestinationDialog.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ExplorerFolderPicker.vb" />
-    <Compile Include="FolderPicker.vb" />
     <Compile Include="MainForm.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -111,7 +109,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Theme.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">

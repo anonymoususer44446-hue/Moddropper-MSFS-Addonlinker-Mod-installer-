@@ -1,6 +1,5 @@
 Imports System.Runtime.InteropServices
 
-''' <summary>Windows Explorer-style folder picker (the modern IFileOpenDialog in folder mode).</summary>
 Public NotInheritable Class ExplorerFolderPicker
     Private Sub New()
     End Sub
@@ -43,7 +42,6 @@ Public NotInheritable Class ExplorerFolderPicker
     Private Const FOS_PATHMUSTEXIST As UInteger = &H800UI
     Private Const SIGDN_FILESYSPATH As UInteger = &H80058000UI
 
-    ''' <summary>Returns the chosen folder, or Nothing if cancelled.</summary>
     Public Shared Function Pick(owner As IWin32Window, initialPath As String, title As String) As String
         Try
             Dim dlg As IFileDialog = DirectCast(Activator.CreateInstance(Type.GetTypeFromCLSID(New Guid("DC1C5A9C-E88A-4dde-A5A1-60F82A20AEF7"))), IFileDialog)

@@ -1,20 +1,18 @@
-﻿Imports System.Drawing.Drawing2D
+Imports System.Drawing.Drawing2D
 Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Web.Script.Serialization
 
 Public Enum DestKind
-    PlainFolder = 0       ' just move the dropped items into a folder
-    MsfsCommunity = 1     ' install mod packages directly into the Community folder
-    MsfsAddonLinker = 2   ' store mod packages in an addons folder + link them into Community
+    PlainFolder = 0
+    MsfsCommunity = 1
+    MsfsAddonLinker = 2
 End Enum
 
 Public Class DestProfile
     Public Property Name As String = ""
     Public Property Kind As DestKind = DestKind.PlainFolder
-    ''' <summary>Where files/mods are physically stored (destination, Community, or the AddonLinker addons folder).</summary>
     Public Property TargetPath As String = ""
-    ''' <summary>AddonLinker only: the Community folder that receives the links.</summary>
     Public Property LinkPath As String = ""
 
     Public Overrides Function ToString() As String
@@ -53,10 +51,6 @@ Public Class AppSettings
 End Class
 
 Public Module MsfsLocator
-    ''' <summary>
-    ''' Best-effort: reads MSFS's UserCfg.opt files (Steam + Microsoft Store installs,
-    ''' 2020 and 2024) and returns any Community folders that exist.
-    ''' </summary>
     Public Function FindCommunityFolders() As List(Of String)
         Dim result As New List(Of String)()
         Dim roaming As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)

@@ -1,10 +1,6 @@
 Imports System.IO
 Imports System.IO.Compression
 
-''' <summary>
-''' Does the actual work for a drop. Runs on a background thread, so it only talks to the UI
-''' through the two callbacks it is given (log line, yes/no question).
-''' </summary>
 Public Class ModInstaller
 
     Private ReadOnly _log As Action(Of String)
@@ -13,7 +9,6 @@ Public Class ModInstaller
     Private _itemIndex As Integer
     Private _itemCount As Integer
 
-    ''' <summary>Optional. Receives overall percent (0-100) and a status text.</summary>
     Public Property Progress As Action(Of Integer, String)
 
     Private Sub Report(fraction As Double, text As String)
@@ -49,7 +44,6 @@ Public Class ModInstaller
         _log("Done.")
     End Sub
 
-    ' ---------------------------------------------------------------- plain folder
 
     Private Sub InstallPlain(item As String, profile As DestProfile)
         Dim name As String = LongPath.LeafName(item)
@@ -72,7 +66,6 @@ Public Class ModInstaller
         _log($"Moved {name} -> {profile.TargetPath}")
     End Sub
 
-    ' ---------------------------------------------------------------- MSFS mods
 
     Private Sub InstallMsfs(item As String, profile As DestProfile)
         Dim itemLong As String = LongPath.ToLong(item)
@@ -84,7 +77,6 @@ Public Class ModInstaller
         Try
             If isZip Then
                 Directory.CreateDirectory(LongPath.ToLong(profile.TargetPath))
-                ' Staging lives next to the final location so the final move is an instant rename.
                 staging = Path.Combine(profile.TargetPath, ".moddropper-" & Guid.NewGuid().ToString("N").Substring(0, 8))
                 _log($"Extracting {LongPath.LeafName(item)} ...")
                 If ArchiveExtractor.IsZip(item) Then ExtractZip(item, staging) Else ArchiveExtractor.Extract(item, staging, Sub(fr) Report(fr, "Extracting " & LongPath.LeafName(item)))
@@ -125,10 +117,6 @@ Public Class ModInstaller
         End Try
     End Sub
 
-    ''' <summary>
-    ''' A mod package is a folder containing manifest.json. If the root itself has one, the whole
-    ''' root is one package (named after the zip/folder); otherwise look up to 3 levels down.
-    ''' </summary>
     Private Function FindPackages(root As String, fallbackName As String) As List(Of KeyValuePair(Of String, String))
         Dim result As New List(Of KeyValuePair(Of String, String))()
         If File.Exists(LongPath.ToLong(Path.Combine(root, "manifest.json"))) Then
@@ -175,7 +163,7 @@ Public Class ModInstaller
 
         If LongPath.AnyExists(linkPath) Then
             If LongPath.IsLink(linkPath) Then
-                LongPath.DeleteAny(linkPath) ' old/stale link - safe, target is untouched
+                LongPath.DeleteAny(linkPath)
             ElseIf _confirm($"A real folder named '{name}' already exists in the Community folder. Replace it with a link?") Then
                 LongPath.DeleteAny(linkPath)
             Else
@@ -188,7 +176,6 @@ Public Class ModInstaller
         _log($"Linked {name} into Community ({method})")
     End Sub
 
-    ' ---------------------------------------------------------------- zip
 
     Private Sub ExtractZip(zipPath As String, destRoot As String)
         Directory.CreateDirectory(LongPath.ToLong(destRoot))
@@ -202,7 +189,6 @@ Public Class ModInstaller
                 Dim rel As String = entry.FullName.Replace("/"c, "\"c)
                 Dim dest As String = Path.GetFullPath(Path.Combine(destRoot, rel))
 
-                ' zip-slip guard: never write outside the staging folder
                 If Not dest.StartsWith(rootFull, StringComparison.OrdinalIgnoreCase) Then Continue For
 
                 If rel.EndsWith("\", StringComparison.Ordinal) Then

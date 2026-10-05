@@ -65,7 +65,6 @@ Public Class MainForm
         AddHandler FormClosing, Sub() SaveSettings()
     End Sub
 
-    ''' <summary>First run: offer any detected MSFS Community folders as ready-made destinations.</summary>
     Private Sub SeedDefaults()
         If _settings.Profiles.Count > 0 Then Return
         Dim n As Integer = 0

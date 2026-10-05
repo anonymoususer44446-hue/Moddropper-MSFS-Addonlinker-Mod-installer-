@@ -1,16 +1,9 @@
-﻿Imports System.ComponentModel
+Imports System.ComponentModel
 Imports System.IO
 Imports System.Runtime.InteropServices
 Imports System.Text
 Imports Microsoft.Win32.SafeHandles
 
-''' <summary>
-''' File helpers that work with paths longer than MAX_PATH WITHOUT the Windows
-''' "enable long paths" registry/group-policy setting. Every path is converted to
-''' the extended-length form (\\?\C:\...) before it touches the file system.
-''' NOTE: parameters are called "p" (not "path") on purpose - VB is case-insensitive
-''' and a parameter named "path" would hide System.IO.Path.
-''' </summary>
 Public Module LongPath
 
     Public Function ToLong(p As String) As String
@@ -21,12 +14,10 @@ Public Module LongPath
         Return "\\?\" & full
     End Function
 
-    ''' <summary>Last segment of a path (works for folders with a trailing slash).</summary>
     Public Function LeafName(p As String) As String
         Return Path.GetFileName(p.TrimEnd("\"c, "/"c))
     End Function
 
-    ''' <summary>True if a file, folder or (even dangling) link exists at this path.</summary>
     Public Function AnyExists(p As String) As Boolean
         Try
             File.GetAttributes(ToLong(p))
@@ -46,7 +37,6 @@ Public Module LongPath
         End Try
     End Function
 
-    ''' <summary>Deletes a file, folder, or link. A link is removed without touching its target.</summary>
     Public Sub DeleteAny(p As String)
         Dim lp As String = ToLong(p)
         Dim a As FileAttributes = File.GetAttributes(lp)
@@ -71,7 +61,6 @@ Public Module LongPath
         If parent IsNot Nothing Then Directory.CreateDirectory(ToLong(parent))
     End Sub
 
-    ''' <summary>Moves a folder. Instant rename on the same drive, copy + delete across drives.</summary>
     Public Sub MoveDir(src As String, dest As String)
         EnsureParent(dest)
         If SameRoot(src, dest) Then
@@ -100,11 +89,6 @@ Public Module LongPath
 
 End Module
 
-''' <summary>
-''' Creates the folder links that make AddonLinker-style installs work.
-''' Tries a symbolic link first (works without admin if Windows Developer Mode is on),
-''' then falls back to a junction (needs no special rights at all).
-''' </summary>
 Public NotInheritable Class LinkHelper
 
     Private Sub New()
@@ -131,10 +115,7 @@ Public NotInheritable Class LinkHelper
     Private Shared Function DeviceIoControl(hDevice As SafeFileHandle, dwIoControlCode As UInteger, lpInBuffer As Byte(), nInBufferSize As UInteger, lpOutBuffer As IntPtr, nOutBufferSize As UInteger, ByRef lpBytesReturned As UInteger, lpOverlapped As IntPtr) As Boolean
     End Function
 
-    ''' <summary>Creates a directory link at linkPath pointing to targetDir. Returns "symbolic link" or "junction".</summary>
     Public Shared Function CreateDirectoryLink(linkPath As String, targetDir As String) As String
-        ' The link location gets the \\?\ treatment. The TARGET is stored as a normal absolute
-        ' path so the link looks like any other link to MSFS / AddonLinker.
         Dim target As String = Path.GetFullPath(targetDir).TrimEnd("\"c)
         Dim linkLong As String = LongPath.ToLong(linkPath)
         LongPath.EnsureParent(linkPath)
