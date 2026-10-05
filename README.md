@@ -20,7 +20,6 @@ No network access and no data collection. It only touches the folders you pick, 
 
 - Replacing a mod deletes the old folder first, files are not merged
 - Password-protected and split multi-part archives are not supported
-- Links made in add-ons folder mode may not show up in the Addon Linker app itself
 - The exe is not code signed, so Windows SmartScreen will warn on first run (More info, then Run anyway)
 
 ## Building
